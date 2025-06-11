@@ -71,7 +71,7 @@ export default function BudgetPage() {
         fetch("/api/budgets", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ category: cat, month, amount: parseFloat(amount) }),
+          body: JSON.stringify({ category: cat, month, amount: parseFloat(amount as string) }),
         })
       )
     );
@@ -82,7 +82,10 @@ export default function BudgetPage() {
   };
 
   const overBudget = actuals.filter((c) => c.actual > c.budget);
-  const topCategory = actuals.reduce((a, b) => (a.actual > b.actual ? a : b), { actual: 0 });
+  const topCategory = actuals.reduce(
+  (a, b) => (a.actual > b.actual ? a : b),
+  { category: "N/A", actual: 0, budget: 0 }
+);
 
   return (
     <div className="p-4 space-y-6">
