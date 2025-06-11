@@ -1,20 +1,28 @@
-// app/api/transactions/[id]/route.ts
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { NextResponse, NextRequest } from "next/server";
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params;
   const body = await req.json();
   const { amount, date, description, category } = body;
 
   const updated = await prisma.transaction.update({
-    where: { id: params.id },
-    data: { amount: parseFloat(amount), date: new Date(date), description, category },
+    where: { id },
+    data: {
+      amount: parseFloat(amount),
+      date: new Date(date),
+      description,
+      category,
+    },
   });
 
   return NextResponse.json(updated);
 }
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
-  await prisma.transaction.delete({ where: { id: params.id } });
+export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params;
+
+  await prisma.transaction.delete({ where: { id } });
+
   return NextResponse.json({ message: "Deleted" });
 }
